@@ -18,137 +18,33 @@
 #include "main.h"
 
 /*!
-    \brief      delay a time in milliseconds
-    \param[in]  count: count in milliseconds
-    \param[out] none
-    \retval     none
-*/
-void delay_1ms(uint32_t count)
-{
-    uint64_t start_mtime, delta_mtime;
-
-    // Don't start measuruing until we see an mtime tick
-    uint64_t tmp = get_timer_value();
-    do
-    {
-        start_mtime = get_timer_value();
-    } while (start_mtime == tmp);
-
-    do
-    {
-        delta_mtime = get_timer_value() - start_mtime;
-    } while (delta_mtime < (SystemCoreClock / 4000.0 * count));
-}
-
-/*!
-    \brief      led_init function
+    \brief      input_port_init function
     \param[in]  none
     \param[out] none
     \retval     none
 */
-void led_init()
+void input_port_init()
 {
-    /* enable the led clock */
-    rcu_periph_clock_enable(RCU_GPIOC);
-    rcu_periph_clock_enable(RCU_GPIOA);
-
-    /* configure led GPIO port */
-    gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13);
-    gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
-    gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-
-    GPIO_BOP(GPIOC) = GPIO_PIN_13;
-    GPIO_BOP(GPIOA) = GPIO_PIN_1;
-    GPIO_BOP(GPIOA) = GPIO_PIN_2;
+    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
 }
 
 /*!
-    Turn on the red part of the RGB LED
-    by clearing PC13
-*/
-void red_on()
-{
-    GPIO_BC(GPIOC) = GPIO_PIN_13;
-}
-/*!
-    Turn off the red part of the RGB LED
-    by setting PC13
-*/
-void red_off()
-{
-    GPIO_BOP(GPIOC) = GPIO_PIN_13;
-}
-/*!
-    Turn on the red part of the RGB LED
-    by clearing PC13
-*/
-void red_flash(uint32_t count)
-{
-    red_on();
-    delay_1ms(count);
-    red_off();
-}
-/*!
-    Turn on the blue part of the RGB LED
-    by clearing PA1
-*/
-void green_on()
-{
-    GPIO_BC(GPIOA) = GPIO_PIN_1;
-}
-/*!
-    Turn off the green part of the RGB LED
-    by setting PA1
-*/
-void green_off()
-{
-    GPIO_BOP(GPIOA) = GPIO_PIN_1;
-}
-/*!
-    Turn on the green part of the RGB LED
-    by clearing PA1
-*/
-void green_flash(uint32_t count)
-{
-    green_on();
-    delay_1ms(count);
-    green_off();
-}
-/*!
-    Turn on the blue part of the RGB LED
-    by clearing PA2
-*/
-void blue_on()
-{
-    GPIO_BC(GPIOA) = GPIO_PIN_2;
-}
-/*!
-    Turn off the blue part of the RGB LED
-    by setting PA2
-*/
-void blue_off()
-{
-    GPIO_BOP(GPIOA) = GPIO_PIN_2;
-}
-/*!
-    Turn on the blue part of the RGB LED
-    by clearing PA1
-*/
-void blue_flash(uint32_t count)
-{
-    blue_on();
-    delay_1ms(count);
-    blue_off();
-}
-
-/*!
-    \brief      input_port_ini function
+    \brief      longan_nano_init function
     \param[in]  none
     \param[out] none
     \retval     none
 */
-void input_port_ini() {
-	gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
+void longan_nano_init(unsigned char *image, uint32_t frame_size)
+{
+    led_init();
+
+    input_port_init();
+
+    lcd_init(image, FRAME_SIZE);
+
+    led_red_off();
+    led_green_off();
+    led_blue_off();
 }
 
 /*!
@@ -159,22 +55,17 @@ void input_port_ini() {
 */
 int main(void)
 {
-    led_init();
-    red_off();
-    green_off();
-    blue_off();
+    unsigned char image[12800];
 
-    input_port_ini();
-
-    lcd_init();
+    longan_nano_init(image, FRAME_SIZE);
 
     while (1)
     {
-        green_flash(10);
-        delay_1ms(1000);
-        blue_flash(10);
-        delay_1ms(1000);
-        red_flash(10);
-        delay_1ms(1000);
+        led_green_flash_times(10, 2, 100);
+        time_delay_1ms(1000);
+        led_red_flash_times(10, 2, 100);
+        time_delay_1ms(1000);
+        led_blue_flash_times(10, 2, 100);
+        time_delay_1ms(1000);
     }
 }

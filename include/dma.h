@@ -14,7 +14,17 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "gd32vf103.h"
-#include "lcd.h"
-#include "led.h"
+
+#ifndef __GD32VF103_DMA_H
+#define __GD32VF103_DMA_H
+/*!
+    \brief      configure the DMA peripheral
+    \param[in]  image: image point
+    \param[in]  frame_size: frame size lcd
+    \param[out] none
+    \retval     none
+*/
+void dma_config(unsigned char *image, uint32_t frame_size);
+
+#endif

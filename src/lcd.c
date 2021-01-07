@@ -16,65 +16,75 @@
  */
 
 #include "lcd.h"
+#include "dma.h"
+#include "time.h"
 
 /*!
-    \brief      configure the DMA peripheral
+    \brief      send 8 bit byte to the LCD using the SPI bus
     \param[in]  none
     \param[out] none
     \retval     none
 */
-void dma_config(void)
+void lcd_bus_write() 
 {
-    dma_parameter_struct dma_init_struct;
+	spi_dma_enable(SPI0, SPI_DMA_TRANSMIT);
+}
 
-    /* SPI0 transmit dma config:DMA0,DMA_CH2 */
-    dma_deinit(DMA0, DMA_CH2);
-    dma_struct_para_init(&dma_init_struct);
+/*!
+    \brief      display 8 bit byte on the LCD
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void lcd_data8_write()
+{
+	OLED_DC_Set(); // set display in data mode
+	lcd_bus_write();
+}
 
-    dma_init_struct.periph_addr = (uint32_t)&SPI_DATA(SPI0);
-    dma_init_struct.memory_addr = (uint32_t)image;
-    dma_init_struct.direction = DMA_MEMORY_TO_PERIPHERAL;
-    dma_init_struct.memory_width = DMA_MEMORY_WIDTH_8BIT;
-    dma_init_struct.periph_width = DMA_PERIPHERAL_WIDTH_8BIT;
-    dma_init_struct.priority = DMA_PRIORITY_LOW;
-    dma_init_struct.number = FRAME_SIZE;
-    dma_init_struct.periph_inc = DMA_PERIPH_INCREASE_DISABLE;
-    dma_init_struct.memory_inc = DMA_MEMORY_INCREASE_ENABLE;
-    dma_init(DMA0, DMA_CH2, &dma_init_struct);
-    /* configure DMA mode */
-    dma_circulation_disable(DMA0, DMA_CH2);
-    dma_memory_to_memory_disable(DMA0, DMA_CH2);
+/******************************************************************************
+      Function description: display 16 bit word to the LCD
+	  Parameter: 
+        dat: word to write
+      Return value: None
+******************************************************************************/
+void LCD_WR_DATA(u16 dat)
+{
+	OLED_DC_Set();//写数据 // set display in data mode
+	LCD_Writ_Bus(dat>>8);
+	LCD_Writ_Bus(dat);
 }
 
 /*!
     \brief      LCD init
-    \param[in]  none
+    \param[in]  image: image point
+    \param[in]  frame_size: frame size lcd
     \param[out] none
     \retval     none
 */
-void lcd_init()
+void lcd_init(unsigned char *image, uint32_t frame_size)
 {
-    // rcu_periph_clock_enable(RCU_GPIOA);
-    // rcu_periph_clock_enable(RCU_GPIOB);
-    // rcu_periph_clock_enable(RCU_DMA0);
-    // rcu_periph_clock_enable(RCU_SPI0);
+    rcu_periph_clock_enable(RCU_GPIOA);
+    rcu_periph_clock_enable(RCU_GPIOB);
+    rcu_periph_clock_enable(RCU_DMA0);
+    rcu_periph_clock_enable(RCU_SPI0);
 
-    // /* SPI0 GPIO config: NSS/PA4, SCK/PA5, MOSI/PA7 */
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7);
-    // /* SPI0 GPIO config: MISO/PA6 */
-    // gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
+    /* SPI0 GPIO config: NSS/PA4, SCK/PA5, MOSI/PA7 */
+    gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_7);
+    /* SPI0 GPIO config: MISO/PA6 */
+    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
 
-    // dma_config();
+    dma_config(image, frame_size);
 
-    // dma_channel_enable(DMA0, DMA_CH2);
-    // gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1);
-    // gpio_bit_reset(GPIOB, GPIO_PIN_0 | GPIO_PIN_1);
+    dma_channel_enable(DMA0, DMA_CH2);
+    gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1);
+    gpio_bit_reset(GPIOB, GPIO_PIN_0 | GPIO_PIN_1);
 
-    // OLED_RST_Clr();
-    // delay_1ms(200);
-    // OLED_RST_Set();
-    // delay_1ms(20);
-    // OLED_BLK_Set();
+    OLED_RST_Clr();
+    time_delay_1ms(200);
+    OLED_RST_Set();
+    time_delay_1ms(20);
+    OLED_BLK_Set();
 
     // LCD_WR_REG(0x11); // turn off sleep mode
     // delay_1ms(100);
@@ -188,3 +198,4 @@ void lcd_init()
 
     // LCD_WR_REG(0x29); // Display On
 }
+

@@ -25,6 +25,21 @@
 
 #define HAS_BLK_CNTL 0
 
+#define OLED_SCLK_Clr() 
+#define OLED_SCLK_Set() 
+
+#define OLED_SDIN_Clr()
+#define OLED_SDIN_Set()
+
+#define OLED_CS_Clr()
+#define OLED_CS_Set()
+
+#define OLED_RST_Clr() gpio_bit_reset(GPIOB,GPIO_PIN_1)     //RES PB1
+#define OLED_RST_Set() gpio_bit_set(GPIOB,GPIO_PIN_1)
+
+#define OLED_DC_Clr() gpio_bit_reset(GPIOB,GPIO_PIN_0)      //DC PB0
+#define OLED_DC_Set() gpio_bit_set(GPIOB,GPIO_PIN_0)
+
 #if HAS_BLK_CNTL
 #define OLED_BLK_Clr() gpio_bit_reset(GPIOA, GPIO_PIN_5) //BLK
 #define OLED_BLK_Set() gpio_bit_set(GPIOA, GPIO_PIN_5)
@@ -33,6 +48,12 @@
 #define OLED_BLK_Set()
 #endif
 
-extern unsigned char image[12800];
-
+/*!
+    \brief      LCD init
+    \param[in]  image: image point
+    \param[in]  frame_size: frame size lcd
+    \param[out] none
+    \retval     none
+*/
+void lcd_init(unsigned char *image, uint32_t frame_size);
 #endif
