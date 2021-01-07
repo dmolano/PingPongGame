@@ -14,6 +14,25 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 #include "gd32vf103.h"
-#include "lcd.h"
+
+#ifndef __GD32VF103_LCD_H
+#define __GD32VF103_LCD_H
+
+#define FRAME_SIZE 25600
+
+#define USE_HORIZONTAL 2
+
+#define HAS_BLK_CNTL 0
+
+#if HAS_BLK_CNTL
+#define OLED_BLK_Clr() gpio_bit_reset(GPIOA, GPIO_PIN_5) //BLK
+#define OLED_BLK_Set() gpio_bit_set(GPIOA, GPIO_PIN_5)
+#else
+#define OLED_BLK_Clr()
+#define OLED_BLK_Set()
+#endif
+
+extern unsigned char image[12800];
+
+#endif

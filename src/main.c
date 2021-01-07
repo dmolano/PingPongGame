@@ -18,6 +18,29 @@
 #include "main.h"
 
 /*!
+    \brief      delay a time in milliseconds
+    \param[in]  count: count in milliseconds
+    \param[out] none
+    \retval     none
+*/
+void delay_1ms(uint32_t count)
+{
+    uint64_t start_mtime, delta_mtime;
+
+    // Don't start measuruing until we see an mtime tick
+    uint64_t tmp = get_timer_value();
+    do
+    {
+        start_mtime = get_timer_value();
+    } while (start_mtime == tmp);
+
+    do
+    {
+        delta_mtime = get_timer_value() - start_mtime;
+    } while (delta_mtime < (SystemCoreClock / 4000.0 * count));
+}
+
+/*!
     \brief      led_init function
     \param[in]  none
     \param[out] none
@@ -56,6 +79,16 @@ void red_off()
     GPIO_BOP(GPIOC) = GPIO_PIN_13;
 }
 /*!
+    Turn on the red part of the RGB LED
+    by clearing PC13
+*/
+void red_flash(uint32_t count)
+{
+    red_on();
+    delay_1ms(count);
+    red_off();
+}
+/*!
     Turn on the blue part of the RGB LED
     by clearing PA1
 */
@@ -70,6 +103,16 @@ void green_on()
 void green_off()
 {
     GPIO_BOP(GPIOA) = GPIO_PIN_1;
+}
+/*!
+    Turn on the green part of the RGB LED
+    by clearing PA1
+*/
+void green_flash(uint32_t count)
+{
+    green_on();
+    delay_1ms(count);
+    green_off();
 }
 /*!
     Turn on the blue part of the RGB LED
@@ -87,28 +130,25 @@ void blue_off()
 {
     GPIO_BOP(GPIOA) = GPIO_PIN_2;
 }
+/*!
+    Turn on the blue part of the RGB LED
+    by clearing PA1
+*/
+void blue_flash(uint32_t count)
+{
+    blue_on();
+    delay_1ms(count);
+    blue_off();
+}
 
 /*!
-    \brief      delay a time in milliseconds
-    \param[in]  count: count in milliseconds
+    \brief      input_port_ini function
+    \param[in]  none
     \param[out] none
     \retval     none
 */
-void delay_1ms(uint32_t count)
-{
-    uint64_t start_mtime, delta_mtime;
-
-    // Don't start measuruing until we see an mtime tick
-    uint64_t tmp = get_timer_value();
-    do
-    {
-        start_mtime = get_timer_value();
-    } while (start_mtime == tmp);
-
-    do
-    {
-        delta_mtime = get_timer_value() - start_mtime;
-    } while (delta_mtime < (SystemCoreClock / 4000.0 * count));
+void input_port_ini() {
+	gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
 }
 
 /*!
@@ -124,11 +164,17 @@ int main(void)
     green_off();
     blue_off();
 
+    input_port_ini();
+
+    lcd_init();
+
     while (1)
     {
-        green_on();
-        delay_1ms(10);
-        green_off();
+        green_flash(10);
+        delay_1ms(1000);
+        blue_flash(10);
+        delay_1ms(1000);
+        red_flash(10);
         delay_1ms(1000);
     }
 }
