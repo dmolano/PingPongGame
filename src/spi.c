@@ -14,58 +14,37 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "main.h"
+#include "spi.h"
 
 /*!
-    \brief      init input port
+    \brief      set 8 bits
     \param[in]  none
     \param[out] none
     \retval     none
 */
-void input_port_init()
+void spi_set_8bit()
 {
-    gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_8);
-}
-
-/*!
-    \brief      init longan nano
-    \param[in]  lcd
-    \param[out] none
-    \retval     none
-*/
-void longan_nano_init(Lcd *lcd)
-{
-    led_init();
-
-    input_port_init();
-
-    lcd_init(lcd);
-
-    led_red_off();
-    led_green_off();
-    led_blue_off();
-}
-
-/*!
-    \brief      main function
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
-int main(void)
-{
-    Lcd lcd;
-
-    longan_nano_init(&lcd);
-
-    while (1)
+    if (SPI_CTL0(SPI0) & (uint32_t)(SPI_CTL0_FF16))
     {
-        led_green_flash_times(10, 2, 100);
-        time_delay_1ms(1000);
-        led_red_flash_times(10, 2, 100);
-        time_delay_1ms(1000);
-        led_blue_flash_times(10, 2, 100);
-        time_delay_1ms(1000);
+        SPI_CTL0(SPI0) &= ~(uint32_t)(SPI_CTL0_SPIEN);
+        // ---------------v
+        SPI_CTL0(SPI0) &= ~(uint32_t)(SPI_CTL0_FF16);
+        SPI_CTL0(SPI0) |= (uint32_t)(SPI_CTL0_SPIEN);
+    }
+}
+
+/*!
+    \brief      set 16 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_set_16bit()
+{
+    if (!(SPI_CTL0(SPI0) & (uint32_t)(SPI_CTL0_FF16)))
+    {
+        SPI_CTL0(SPI0) &= ~(uint32_t)(SPI_CTL0_SPIEN);
+        SPI_CTL0(SPI0) |= (uint32_t)(SPI_CTL0_FF16);
+        SPI_CTL0(SPI0) |= (uint32_t)(SPI_CTL0_SPIEN);
     }
 }
