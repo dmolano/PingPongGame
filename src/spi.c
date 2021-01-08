@@ -22,6 +22,42 @@
     \param[out] none
     \retval     none
 */
+void spi_wait_idle()
+{
+    while (SPI_STAT(SPI0) & SPI_STAT_TRANS)
+        ;
+}
+
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_wait_tbe()
+{
+    while (!(SPI_STAT(SPI0) & SPI_STAT_TBE))
+        ;
+}
+
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_wait_rbne()
+{
+    while (!(SPI_STAT(SPI0) & SPI_STAT_RBNE))
+        ;
+}
+
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
 void spi_set_8bit()
 {
     if (SPI_CTL0(SPI0) & (uint32_t)(SPI_CTL0_FF16))

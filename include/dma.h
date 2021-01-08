@@ -18,13 +18,31 @@
 
 #ifndef __GD32VF103_DMA_H
 #define __GD32VF103_DMA_H
+
 /*!
-    \brief      configure the DMA peripheral
-    \param[in]  image: image point
-    \param[in]  frame_size: frame size lcd
+    \brief      wait recive
+    \param[in]  none
+     \param[out] none
+    \retval     none
+*/
+void dma_wait_recv();
+
+/*!
+    \brief      send unsigned byte to DMA peripheral
+    \param[in]  dma_const_data_value_address: data
+    \param[in]  count: count
     \param[out] none
     \retval     none
 */
-void dma_config(unsigned char *image, uint32_t frame_size);
+void dma_send_const_u8(uint32_t dma_const_data_value_address, uint32_t count);
+
+/*!
+    \brief      send unsigned half word to DMA peripheral
+    \param[in]  dma_const_data_value_address: data
+    \param[in]  count: count
+    \param[out] none
+    \retval     none
+*/
+void dma_send_const_u16(uint32_t dma_const_data_value_address, uint32_t count);
 
 #endif

@@ -19,7 +19,44 @@
 #ifndef __GD32VF103_SPI_H
 #define __GD32VF103_SPI_H
 
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_wait_idle();
+
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_wait_tbe();
+
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void spi_wait_rbne();
+
+/*!
+    \brief      set 8 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
 void spi_set_8bit();
+
+/*!
+    \brief      set 16 bits
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
 void spi_set_16bit();
 
 #endif
