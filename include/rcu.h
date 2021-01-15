@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "gd32vf103_rcu.h"
 
-#include "gd32vf103.h"
-#include "rcu.h"
-#include "lcd.h"
-#include "led.h"
+#ifndef __GD32VF103_RCU_H
+#define __GD32VF103_RCU_H
+
+#endif

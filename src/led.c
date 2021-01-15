@@ -25,9 +25,6 @@
 */
 void led_init()
 {
-    /* enable the led clock */
-    rcu_periph_clock_enable(RCU_GPIOC);
-    rcu_periph_clock_enable(RCU_GPIOA);
 
     /* configure led GPIO port */
     gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13);

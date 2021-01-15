@@ -14,8 +14,21 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "gd32vf103.h"
 #include "rcu.h"
-#include "lcd.h"
-#include "led.h"
+
+/*!
+    \brief      led_init function
+    \param[in]  none
+    \param[out] none
+    \retval     none
+*/
+void rcu_init()
+{
+    /* enable the led clock */
+    rcu_periph_clock_enable(RCU_GPIOA);
+    rcu_periph_clock_enable(RCU_GPIOB);
+    rcu_periph_clock_enable(RCU_GPIOC);
+    rcu_periph_clock_enable(RCU_AF);
+    rcu_periph_clock_enable(RCU_DMA0);
+    rcu_periph_clock_enable(RCU_SPI0);
+}

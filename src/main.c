@@ -36,6 +36,8 @@ void input_port_init()
 */
 void longan_nano_init(Lcd *lcd)
 {
+    rcu_init();
+    
     led_init();
 
     input_port_init();
@@ -58,6 +60,8 @@ int main(void)
     Lcd lcd;
 
     longan_nano_init(&lcd);
+
+    lcd_setpixel(lcd.width >> 2, lcd.height >> 2, 0b1111111111111111);
 
     while (1)
     {

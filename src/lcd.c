@@ -326,11 +326,6 @@ void lcd_fb_disable(Lcd *lcd)
 */
 void lcd_init(Lcd *lcd)
 {
-    rcu_periph_clock_enable(RCU_GPIOA);
-    rcu_periph_clock_enable(RCU_GPIOB);
-    rcu_periph_clock_enable(RCU_AF);
-    rcu_periph_clock_enable(RCU_DMA0);
-    rcu_periph_clock_enable(RCU_SPI0);
 
     gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
     gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2);
@@ -387,11 +382,15 @@ void lcd_init(Lcd *lcd)
     {
         lcd_reg(*p++);
         if (*p == 0xff)
+        {
             continue;
+        }
         spi_wait_idle();
         lcd_mode_data();
         while (*p != 0xff)
+        {
             lcd_u8c(*p++);
+        }
     }
 
     // Clear display.
@@ -403,4 +402,16 @@ void lcd_init(Lcd *lcd)
     lcd->fb_enabled = 0;
     lcd->width = LCD_WIDTH;
     lcd->height = LCD_HEIGHT;
+}
+
+void lcd_setpixel(Lcd *lcd, int x, int y, unsigned short int color)
+{
+    if (lcd->fb_enabled) {
+        return;
+    }
+
+    lcd_wait(lcd);
+    lcd_set_addr(x, y, 1, 1);
+    lcd_u8(color >> 8);
+    lcd_u8c(color);
 }
